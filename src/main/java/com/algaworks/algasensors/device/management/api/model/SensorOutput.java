@@ -14,4 +14,5 @@ public class SensorOutput {
     private String location;
     private String protocol;
     private String model;
+    private Boolean enabled;
 }
