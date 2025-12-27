@@ -3,20 +3,25 @@ package com.algaworks.algasensors.device.management.api.controller;
 import com.algaworks.algasensors.device.management.api.model.SensorInput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
 import com.algaworks.algasensors.device.management.domain.model.Sensor;
+import com.algaworks.algasensors.device.management.domain.model.SensorId;
+import com.algaworks.algasensors.device.management.domain.repository.SensorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 //10.2. Implementando um microsserviço com Spring - 4'
 @RestController
 @RequestMapping("api/sensors")
+@RequiredArgsConstructor //10.4. Implementando a persistência com Jakarta Persistence e Spring Data JPA - 8'20"
 public class SensorController {
+
+    private final SensorRepository sensorRepository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Sensor create(@RequestBody SensorInput input) {
-
-        return Sensor.builder()
-                .id(IdGenerator.generateTSID())
+        Sensor sensor = Sensor.builder()
+                .id(new SensorId(IdGenerator.generateTSID()))
                 .name(input.getName())
                 .ip(input.getIp())
                 .location(input.getLocation())
@@ -24,5 +29,7 @@ public class SensorController {
                 .model(input.getModel())
                 .enabled(false)
                 .build();
+
+        return sensorRepository.saveAndFlush(sensor);
     }
 }
