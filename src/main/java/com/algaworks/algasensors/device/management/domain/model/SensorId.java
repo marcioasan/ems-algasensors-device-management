@@ -3,6 +3,7 @@ package com.algaworks.algasensors.device.management.domain.model;
 import io.hypersistence.tsid.TSID;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //10.4. Implementando a persistência com Jakarta Persistence e Spring Data JPA - 8'
+@EqualsAndHashCode //10.14. Implementando a consulta do log de temperaturas - 4'40"
 public class SensorId implements Serializable {
 
     private TSID value;
