@@ -1,5 +1,6 @@
 package com.algaworks.algasensors.device.management.api.controller;
 
+import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.SensorInput;
 import com.algaworks.algasensors.device.management.api.model.SensorOutput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 //10.2. Implementando um microsserviço com Spring - 4'
 @RestController
 @RequestMapping("api/sensors")
@@ -24,6 +23,7 @@ import java.util.Optional;
 public class SensorController {
 
     private final SensorRepository sensorRepository;
+    private final SensorMonitoringClient sensorMonitoringClient; //11.2. Integração de REST API com RestClient do Spring - 8'40"
 
     //10.7. Implementando paginação de resultados da consulta
     @GetMapping
@@ -81,6 +81,8 @@ public class SensorController {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensorRepository.delete(sensor);
+
+        sensorMonitoringClient.disableMonitoring(sensorId); //11.2. Integração de REST API com RestClient do Spring - 9'10"
     }
 
     //10.10. Desafio: inativação dos sensores
@@ -91,6 +93,8 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(true);
         sensorRepository.save(sensor);
+
+        sensorMonitoringClient.enableMonitoring(sensorId);
     }
 
     @DeleteMapping("/{sensorId}/enable")
@@ -100,6 +104,8 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(false);
         sensorRepository.save(sensor);
+
+        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 
     //10.5. Ajustando a representação do recurso REST com classe Model
